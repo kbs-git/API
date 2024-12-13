@@ -1,0 +1,347 @@
+{
+	"info": {
+		"_postman_id": "fb1f1f3b-605d-4c2b-a764-d37007c5ae19",
+		"name": "spotify",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "40295023"
+	},
+	"item": [
+		{
+			"name": "users",
+			"item": [
+				{
+					"name": "GetUserSpotifyProfile",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"console.log(\"Post Test Scripts\");\r",
+									"var jsonData =pm.response.json();\r",
+									"console.log(jsonData.id);\r",
+									"pm.collectionVariables.set(\"user_id\", jsonData.id);\r",
+									"console.log(\"Check the satatus code\");\r",
+									"pm.test(\"The spotify user is status is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"console.log(\"Test the user name\");\r",
+									"pm.test(\"Verify the user name\", function () {\r",
+									"    pm.expect(jsonData.display_name).to.eql(\"TestSpotify\");\r",
+									"});\r",
+									"if(jsonData.display_name==\"TestSpotify\"){\r",
+									"    pm.execution.setNextRequest(\"createPlayList\");\r",
+									"}\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access-token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{spotifyurl}}/v1/me",
+							"host": [
+								"{{spotifyurl}}"
+							],
+							"path": [
+								"v1",
+								"me"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "PlayList",
+			"item": [
+				{
+					"name": "createPlayList",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const jsonData=pm.response.json();\r",
+									"pm.test(\"Check Palylist is created with status code has 201\", function () {\r",
+									"    pm.response.to.have.status(201);\r",
+									"});\r",
+									"//pm.test(\"Check the created Playlist Name is New Playlist\", function () {\r",
+									"//    pm.expect(jsonData.name).to.eql(\"New Playlist1\");\r",
+									"//});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access-token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{access-token}}",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"New Playlist1\",\r\n    \"description\": \"New playlist description\",\r\n    \"public\": false\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{spotifyurl}}/v1/users/{{user_id}}/playlists",
+							"host": [
+								"{{spotifyurl}}"
+							],
+							"path": [
+								"v1",
+								"users",
+								"{{user_id}}",
+								"playlists"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetUserPlayList",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const jsonData = pm.response.json();\r",
+									"pm.test(\"Content-Type is present\", function () {\r",
+									"    pm.response.to.have.header(\"Content-Type\");\r",
+									"});\r",
+									"pm.test(\"Check the Content header has the application/json value\", function () {\r",
+									"    const headerValue = pm.response.headers.get(\"Content-Type\");\r",
+									"    console.log(\"Header Value:\", headerValue);\r",
+									"    pm.expect(headerValue).to.include(\"application/json\");\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access-token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{spotifyurl}}/v1/users/{{user_id}}/playlists",
+							"host": [
+								"{{spotifyurl}}"
+							],
+							"path": [
+								"v1",
+								"users",
+								"{{user_id}}",
+								"playlists"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"auth": {
+		"type": "oauth2",
+		"oauth2": [
+			{
+				"key": "scope",
+				"value": "{{scope}}",
+				"type": "string"
+			},
+			{
+				"key": "clientSecret",
+				"value": "{{client_secret}}",
+				"type": "string"
+			},
+			{
+				"key": "clientId",
+				"value": "{{client_id}}",
+				"type": "string"
+			},
+			{
+				"key": "tokenType",
+				"value": "Bearer",
+				"type": "string"
+			},
+			{
+				"key": "accessToken",
+				"value": "BQCEHVgtSy0w0XPDwDUAov-XEvX9Nhfy2slcPDDMvhUxe9z6DTB5MQAgOurl0PvCs-6JEOcNt6C6o46NeG_19xgn608m-rzAlILknfcPczdJp-8jmix6GH909vsAdbtSU85KaqylE4HXtjMzhLjOiFnfLc44_wbL_wi0GV320OxJn7GJ5Gmp-sMEQNkfUHQYLAhLLYyoQqUmdzf6rMrtDhV929nSePp9G60rGRS_k4M6X2IiLf66tfH9hD9iulLJ7UoiFRWAz5IRTVlkmXkrTQ",
+				"type": "string"
+			},
+			{
+				"key": "refreshRequestParams",
+				"value": [],
+				"type": "any"
+			},
+			{
+				"key": "tokenRequestParams",
+				"value": [],
+				"type": "any"
+			},
+			{
+				"key": "authRequestParams",
+				"value": [],
+				"type": "any"
+			},
+			{
+				"key": "tokenName",
+				"value": "SpotifyToken",
+				"type": "string"
+			},
+			{
+				"key": "challengeAlgorithm",
+				"value": "S256",
+				"type": "string"
+			},
+			{
+				"key": "redirect_uri",
+				"value": "https://localhost:7777",
+				"type": "string"
+			},
+			{
+				"key": "grant_type",
+				"value": "authorization_code",
+				"type": "string"
+			},
+			{
+				"key": "authUrl",
+				"value": "https://accounts.spotify.com/authorize",
+				"type": "string"
+			},
+			{
+				"key": "addTokenTo",
+				"value": "header",
+				"type": "string"
+			},
+			{
+				"key": "client_authentication",
+				"value": "header",
+				"type": "string"
+			},
+			{
+				"key": "accessTokenUrl",
+				"value": "https://accounts.spotify.com/api/token",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "user_id",
+			"value": "31moxqdbixgrwwzpv5zvwzm5uyou",
+			"type": "string"
+		}
+	]
+}
